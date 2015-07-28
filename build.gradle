@@ -1,0 +1,99 @@
+apply plugin:"java";
+apply plugin:"application";
+apply plugin:"eclipse";
+apply plugin:"project-report";
+
+ext{
+	springVersion="4.1.7.RELEASE";
+	mybatisSpringVersion="1.2.3";
+	mybatisVersion="3.3.0";
+	mybatisGeneratorVersion="1.3.0";
+	dbcpVersion="1.4";
+	groovyVersion="2.4.4";
+}
+
+def version = '1.0'
+def sourceCompatibility = 1.7
+def targetCompatibility = 1.7
+
+
+mainClassName="at.eg.sprfrm.cmrdqi.ShellRunner";
+
+
+
+repositories{
+	mavenCentral();
+}
+
+configurations{
+	all*.exclude(group:"commons-logging");
+}
+
+dependencies {
+	//myBatis
+	compile "org.mybatis:mybatis:$mybatisVersion";
+	compile "org.mybatis:mybatis-spring:$mybatisSpringVersion";
+	compile "org.mybatis.generator:mybatis-generator-core:$mybatisGeneratorVersion";
+	
+	
+    //spring
+    compile "org.springframework:spring-jdbc:$springVersion";
+    compile "org.springframework:spring-context:$springVersion";
+    compile "org.springframework:spring-test:$springVersion";
+    //logging
+    compile "ch.qos.logback:logback-classic:+";
+    compile "org.slf4j:jcl-over-slf4j:+";
+    
+    compile "commons-dbcp:commons-dbcp:$dbcpVersion";
+    
+    //oracle-jdbc
+    compile files("d:/Java-Libs/oracle/ojdbc6.jar");
+    
+    //groovy
+    runtime "org.codehaus.groovy:groovy:$groovyVersion"
+   
+    testCompile "junit:junit:+";
+    
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+
+task mgenerator<<{
+	ant.taskdef(name:"mbgenerator",className:"org.mybatis.generator.ant.GeneratorAntTask"
+	,classpath:configurations.compile.asPath);
+	ant.mbgenerator(overwrite:"false",configfile:"src/main/resources/mybatis-generator.xml");
+}
+
+jar{
+	manifest{
+		attributes "Main-Class":project.mainClassName;
+		attributes "Create-By":"Erste Spring Project Framework Team";
+	}
+	exclude("templates/**")
+	exclude("cmt_check.properties")
+}
+
+task createSetupForConfiguration(type:Copy){
+	from 'src/main/resources/templates/cmt_check_production.properties';
+	into 'src/dist/lib/conf';
+	rename '(.+)_production(.+)', '$1$2'
+	
+}
+
+task cleanSrcDist(type:Delete){
+	delete 'src/dist';
+}
+
+createSetupForConfiguration.dependsOn cleanSrcDist
+startScripts.dependsOn createSetupForConfiguration
+
+
+startScripts{
+	outputs.upToDateWhen({return false});//always to be executed
+	doFirst{
+		classpath.add(files('conf'));
+	}
+}
+

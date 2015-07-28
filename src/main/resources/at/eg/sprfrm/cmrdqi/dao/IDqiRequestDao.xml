@@ -1,0 +1,57 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao">
+	  
+	 <resultMap id="Request" type="DqiRequest">
+	  	<!--
+	  		Mapping specification for a DqiRequest 
+	  	-->
+	  	<id column="RQ_ID" property="id" jdbcType="NUMERIC" />
+	    <result column="RQ_DESC" property="description" jdbcType="VARCHAR" />
+	    <result column="RQ_REQUESTER_CODE" property="requesterCode" jdbcType="VARCHAR" />
+	    <result column="RQ_METHOD" property="method" jdbcType="VARCHAR" />
+	    <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP" />
+	    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+	    <result column="LAST_USER" property="lastUser" jdbcType="VARCHAR" />
+	 </resultMap>
+	 
+	 <sql id="generateKey">
+	 	select seq_checks.nextval from dual
+	 </sql>
+
+	 <sql id="baseColumnList" >
+	 	<!--
+	 		All de columns from the table 
+	 	 -->
+    	RQ_ID, RQ_DESC, RQ_REQUESTER_CODE, RQ_METHOD, rq.INSERT_TIME, rq.UPDATE_TIME, rq.LAST_USER
+  	</sql>
+
+	<select id="selectRequestDetails" resultMap="Request">
+		<!--
+			Selects a specific Request from the Databse. The selection criteria is  
+		 -->
+		select
+		<include refid="baseColumnList"/>
+		from CMT_CHECK_REQUEST rq
+		where rq_id=#{id}
+	</select>
+  
+	<insert id="insertRequest">
+		<!--
+			Inserts a new reuest in the databse, after it obtains the od for it  
+		-->
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			<include refid="generateKey"/>
+		</selectKey>
+	  	insert into O_LDS_META.CMT_CHECK_REQUEST
+	  	(RQ_ID, RQ_DESC, RQ_REQUESTER_CODE,RQ_METHOD,INSERT_TIME,UPDATE_TIME,LAST_USER)
+    	values (
+    	#{id,jdbcType=NUMERIC}, #{description,jdbcType=VARCHAR}, #{requesterCode,jdbcType=VARCHAR}, 
+      	#{method,jdbcType=VARCHAR}, sysdate, sysdate, 
+      	#{lastUser,jdbcType=VARCHAR}
+      	)
+	</insert>
+	
+</mapper>

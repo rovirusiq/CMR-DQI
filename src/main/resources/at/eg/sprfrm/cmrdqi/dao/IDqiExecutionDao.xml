@@ -1,0 +1,125 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao">
+
+		<!--
+	  	Mapping specification for a DqiExecution 
+	   -->
+	  <resultMap id="ExecutionBasicDetails" type="DqiExecution">
+	    <id property="id" column="EX_ID"/>
+	    <result property="definition.id" column="ORIG_CHK_ID"/>
+	    <result property="definition.name" column="ORIG_CHK_NAME"/>
+	    <result property="definition.code" column="ORIG_CHK_CODE"/>
+	    <result property="definition.description" column="ORIG_CHK_DESCRIPTION"/>
+	    <result property="definition.area" column="ORIG_CHK_AREA"/>
+	    <result property="definition.group" column="ORIG_CHK_GROUP"/>
+	    <result property="definition.subGroup" column="ORIG_CHK_SUBGROUP"/>
+	    <result property="definition.executionFrequency" column="ORIG_CHK_EXECUTION_FREQUENCY"/>
+	    <result property="definition.sql" column="ORIG_CHK_SQL"/>
+	    <result property="status" column="EX_STATUS"/>
+	    <result property="statusDetails" column="EX_STATUS_DETAILS"/>
+	    <result property="startTime" column="EX_START"/>
+	    <result property="endTime" column="EX_END"/>
+	    <result property="lastUser" column="LAST_USER"/>
+	    <result property="insertTime" column="insert_Time"/>
+	    <result property="updateTime" column="update_Time"/>
+	    <!-- Association for subquery -->
+	    <!-- 
+	    <association property="request" fetchType="eager" 
+	    	column="EX_RQ_ID"
+	    	select="at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao.selectRequestDetails">
+	    </association>
+	     -->
+	    <!-- Association for nested results -->
+	     <association property="request"
+	    	columnPrefix="P_"
+	    	resultMap="at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao.Request">
+	    </association>
+	  </resultMap>
+
+	<sql id="basicColumnList">
+		<!--
+			Columns from the table 
+		 -->
+		 EX_ID,EX_RQ_ID,ORIG_CHK_ID,ORIG_CHK_NAME,ORIG_CHK_DESCRIPTION,ORIG_CHK_AREA,ORIG_CHK_GROUP,ORIG_CHK_SUBGROUP
+		,ORIG_CHK_EXECUTION_FREQUENCY,ORIG_CHK_CODE,ORIG_CHK_SQL,EX_STATUS,EX_STATUS_DETAILS,EX_START,EX_END
+		,ex.INSERT_TIME,ex.UPDATE_TIME,ex.LAST_USER
+	</sql>
+	
+	<sql id="requestColumnList">
+		<!--
+			Columns from the table.
+			Can be useful if the association used in the end will be of type netsed result
+		 -->
+		RQ_ID as P_RQ_ID, RQ_DESC as P_RQ_DESC
+		, RQ_REQUESTER_CODE as P_RQ_REQUESTER_CODE
+		, RQ_METHOD as P_RQ_METHOD
+		, rq.INSERT_TIME as P_INSERT_TIME
+		, rq.UPDATE_TIME as P_UPDATE_TIME
+		, rq.LAST_USER as P_LAST_USER
+	</sql>
+
+  
+	<insert id="createExecutionBasicDetails">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			select seq_checks.nextval from dual
+		</selectKey>
+		insert into CMT_CHECK_EXECUTION(
+		EX_ID,EX_RQ_ID,ORIG_CHK_ID,ORIG_CHK_NAME,ORIG_CHK_DESCRIPTION,ORIG_CHK_AREA,ORIG_CHK_GROUP,ORIG_CHK_SUBGROUP
+		,ORIG_CHK_EXECUTION_FREQUENCY,ORIG_CHK_CODE,ORIG_CHK_SQL,EX_STATUS,LAST_USER
+		) values(
+		#{id},#{request.id},#{definition.id},#{definition.name},#{definition.description},#{definition.area},#{definition.group,jdbcType=VARCHAR},#{definition.subGroup,jdbcType=VARCHAR}
+		,#{definition.executionFrequency},#{definition.code},#{definition.sql},#{status},#{lastUser,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateExecutionBasicDetails">
+		update CMT_CHECK_EXECUTION SET 
+		EX_STATUS=#{status}
+		,EX_STATUS_DETAILS=#{statusDetails}
+		,EX_START=#{startTime}
+		,EX_END=#{endTime}
+		,UPDATE_TIME=sysdate
+		,LAST_USER=#{lastUser,jdbcType=VARCHAR}
+		where ex_id=#{id}
+	</update>
+	
+	<select id="selectExecutionBasicDetails_WithSubQuery" resultMap="ExecutionBasicDetails">
+		select
+		<include refid="basicColumnList"/>
+		from cmt_check_execution  ex
+		where ex_id=#{param1}
+	</select>
+	
+	<select id="selectExecutionBasicDetails" resultMap="ExecutionBasicDetails">
+		select
+		<include refid="basicColumnList"/>
+		,
+		<include refid="requestColumnList"/>
+		from cmt_check_execution ex inner join cmt_check_request rq on ex.ex_rq_id=rq.rq_id
+		where ex_id=#{param1}
+	</select>
+	
+	<select id="selectExecutionAllDetails" resultMap="ExecutionBasicDetails">
+		select
+		<include refid="basicColumnList"/>
+		from cmt_check_execution ex where ex_id=#{param1}
+	</select>
+	
+	<insert id="createIssue">
+		<selectKey keyProperty="param3" resultType="long" order="BEFORE">
+			select seq_checks.nextval from dual
+		</selectKey>
+		<!-- 
+			Hack to determine the OGNL to assign the value in the param3 to the element at index $param2 from the issueList
+		-->
+		
+		<bind name="ceva" value="param1.issueList[param2].id=param3"/>
+		
+		insert into CMT_CHECK_ISSUE (ISS_ID,ISS_EX_ID,ISS_RQ_ID,ISS_DESCRIPTION,ISS_TYPE,LAST_USER)
+		values(#{param1.issueList[${param2}].id},#{param1.id},#{param1.request.id},#{param1.issueList[${param2}].description},#{param1.issueList[${param2}].type},#{param1.issueList[${param2}].lastUser,jdbcType=VARCHAR})
+	</insert>
+  
+</mapper>

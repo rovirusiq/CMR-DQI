@@ -1,0 +1,73 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionDao">
+ 
+  <!-- Result maps describe the mapping between the columns returned
+ from a query, and the class properties.  A result map isn't
+ necessary if the columns (or aliases) match to the properties
+ exactly. -->
+  
+  <sql id="selecDefinitionColumns">
+  	select 
+  	CHK_ID,CHK_NAME,CHK_CODE,CHK_DESCRIPTION
+  	,CHK_AREA,CHK_GROUP,CHK_SUBGROUP,CHK_EXECUTION_FREQUENCY,CHK_SQL
+  	,def.LAST_USER,def.INSERT_TIME,def.UPDATE_TIME
+	from cmt_check_definition def
+  </sql>
+  
+  
+  <!--
+  	Mapping specification for a DqiDefinition 
+   -->
+  <resultMap id="Definition" type="DqiDefinition">
+    <id property="id" column="CHK_ID"/>
+    <result property="name" column="CHK_NAME"/>
+    <result property="code" column="CHK_CODE"/>
+    <result property="description" column="CHK_DESCRIPTION"/>
+    <result property="area" column="CHK_AREA"/>
+    <result property="group" column="CHK_GROUP"/>
+    <result property="subGroup" column="CHK_SUBGROUP"/>
+    <result property="executionFrequency" column="CHK_EXECUTION_FREQUENCY"/>
+    <result property="sql" column="CHK_SQL"/>
+    <result property="lastUser" column="LAST_USER"/>
+    <result property="insertTime" column="insert_Time"/>
+    <result property="updateTime" column="update_Time"/>
+  </resultMap>
+  
+ 
+  <!-- 
+  	Select one complete DqiDefinition from the database.
+  	The parameter #{id] is the id of the DqiDefinition from the CMT_CHECKS_DEFINTION
+  -->
+  <select id="selectDefinition" resultMap="Definition">
+   <include refid="selecDefinitionColumns"/>
+   where chk_id=#{id}
+  </select>
+  
+   <!-- 
+  	Select all DqiDefintions
+  -->
+  <select id="selectAllDefintions" resultMap="Definition">
+  	<include refid="selecDefinitionColumns"/>
+  </select>
+  
+  <!--
+  	Select all the IDs (an only the id's) of the DqiDefinitions 
+   -->
+  <select id="selectAllDefintionIds" resultType="Integer">
+  	select CHK_ID from cmt_check_definition def
+  </select>
+  
+  
+  <!--
+  	Executes a check against the database 
+   -->
+  <select id="executeGenericQueryDefinition" resultType="Long">
+  	select count(*) from (
+  		${sql}
+  	)
+  </select>
+  
+</mapper>

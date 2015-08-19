@@ -46,6 +46,9 @@ public class ShellRunner {
 			area=args[0].trim().toUpperCase();
 			group=args[1].trim().toUpperCase();
 			subgroup=args[2].trim().toUpperCase();
+			log.info("CHK_AREA="+area);
+			log.info("CHK_GROUP="+group);
+			log.info("CHK_SUBGROUP="+subgroup);
 		} else if (args.length==5) {
 			log.info("5 paramters provided. They will be read as CHK_AREA, CHK_GROUP,CHK_SUBGROUP, REQUESTER_CODE, REQUEST_DESCRIPTION");
 			area=args[0].trim().toUpperCase();
@@ -53,6 +56,11 @@ public class ShellRunner {
 			subgroup=args[2].trim().toUpperCase();
 			REQ_CODE=args[3].trim().toUpperCase();
 			REQ_DESC=args[4].trim();
+			log.info("CHK_AREA="+area);
+			log.info("CHK_GROUP="+group);
+			log.info("CHK_SUBGROUP="+subgroup);
+			log.info("REQUESTER_CODE="+REQ_CODE);
+			log.info("REQUEST_DESCRIPTION="+REQ_DESC);
 		} else if (args.length==8){
 			log.info("8 paramters provided. They will be read as CHK_AREA, CHK_GROUP,CHK_SUBGROUP, REQUESTER_CODE, REQUEST_DESCRIPTION, DATABASE_URL, DATABASE_USERNAME,DATABASE_PASSWORD");
 			area=args[0].trim().toUpperCase();
@@ -60,9 +68,18 @@ public class ShellRunner {
 			subgroup=args[2].trim().toUpperCase();
 			REQ_CODE=args[3].trim().toUpperCase();
 			REQ_DESC=args[4].trim();
-			configuration.setDatabaseUrl(args[2].trim());
-			configuration.setDatabaseUsername(args[3].trim());
-			configuration.setDatabasePassword(args[4].trim());
+			configuration.setDatabaseUrl(args[5].trim());
+			configuration.setDatabaseUsername(args[6].trim());
+			configuration.setDatabasePassword(args[7].trim());
+			log.info("CHK_AREA="+area);
+			log.info("CHK_GROUP="+group);
+			log.info("CHK_SUBGROUP="+subgroup);
+			log.info("REQUESTER_CODE="+REQ_CODE);
+			log.info("REQUEST_DESCRIPTION="+REQ_DESC);
+			log.info("DATABASE_URL="+args[5].trim());
+			log.info("DATABASE_USERNAME="+args[6].trim());
+			log.info("DATABASE_PASSWORD="+args[7].trim());
+			
 		} else {
 			String msg="None of the expected parameter configuration was identified.";
 			log.info(msg);

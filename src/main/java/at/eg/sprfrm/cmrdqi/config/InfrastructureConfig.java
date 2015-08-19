@@ -9,8 +9,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import ch.qos.logback.core.hook.DelayingShutdownHook;
-
 @Configuration
 @EnableTransactionManagement
 public class InfrastructureConfig {

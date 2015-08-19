@@ -51,4 +51,21 @@ public class TestQueriesDefinitions {
 	
 	public static final String SELECT_FOR_CHECK_WITH_DAO_EXCEPTION="select 1#gsfs from adada where bla>xc";
 	
+	public static final String SELECT_CHK_PARAMETERS="select" 
+			+" PRM_ID,PRM_TYPE,PRM_KEY,PRM_VALUE,PRM_REFRESH_FLAG,INSERT_TIME,UPDATE_TIME,LAST_USER"
+			+" from cmt_check_parameter param order by PRM_ID ASC";
+	
+	public static final String INSERT_TEST_CHK_PARAMETER="insert into cmt_check_parameter" 
+			+"(PRM_ID,PRM_TYPE,PRM_KEY,PRM_VALUE,PRM_REFRESH_FLAG,LAST_USER)"
+			+" values(seq_checks.nextval, 'FIXED', 'PARAM-TEST-2', '3.14-2', 'N','JUNIT_DATA')";
+	
+	public static final String SELECT_CHK_PARAMETER_COUNT="select count(*) from cmt_check_parameter"; 
+	
+	public static final String SELECT_PARAMETER_VALUE_1="select PRM_VALUE from cmt_check_parameter t where "
+			+ "last_user='JUNIT_DATA_PREP' and prm_key='"+TestDqiHelper.PARAMETER_NAME_1+"'";
+	
+	public static final String INSERT_CHECK_DEFINITION="insert into O_LDS_META.CMT_CHECK_DEFINITION"
+			+ " (CHK_ID, CHK_NAME, CHK_DESCRIPTION, CHK_AREA,CHK_GROUP,CHK_SUBGROUP, CHK_EXECUTION_FREQUENCY, CHK_SQL, LAST_USER, CHK_CODE)"
+			+ " values (seq_checks.nextval, ?, 'If you see this an error has occured.Inserted for JUNIT testing, it should be deleted after the tests are run',?,?,?, 'DAILY',?, 'JUNIT', ?)";
+	
 }

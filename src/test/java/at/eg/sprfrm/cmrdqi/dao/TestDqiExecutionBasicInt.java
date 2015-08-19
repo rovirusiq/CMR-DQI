@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import at.eg.sprfrm.cmrdqi.config.TestConfig;
 import at.eg.sprfrm.cmrdqi.model.DqiExecution;
-import at.eg.sprfrm.cmrdqi.model.TestDqiFactoryObject;
+import at.eg.sprfrm.cmrdqi.model.TestIntegrationFactoryObject;
 import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,7 +40,7 @@ public class TestDqiExecutionBasicInt {
 	private TestDqiHelper testHelper;
 	
 	@Autowired
-	private TestDqiFactoryObject factoryObject;
+	private TestIntegrationFactoryObject factoryObject;
 	
 	@Autowired
 	@Qualifier("dqiExecutionDao")

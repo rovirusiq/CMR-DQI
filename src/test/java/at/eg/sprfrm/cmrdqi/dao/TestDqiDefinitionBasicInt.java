@@ -1,7 +1,8 @@
 package at.eg.sprfrm.cmrdqi.dao;
 
 import static at.eg.sprfrm.cmrdqi.testutil.TestDqiUtils.checkDqiDefinitionAgainstRowSetAsFull;
-import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.SELECT_CHK_DEFINITION;
+import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.*;
+import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -60,6 +61,81 @@ public class TestDqiDefinitionBasicInt {
 			checkDqiDefinitionAgainstRowSetAsFull(dqiDef, rslt, true);
 
 		}
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters1() {
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions();
+		assertEquals("Size for getting all defintions whithout criteria should be 0",0,lst.size());
+		
+		lst=dqiDefintionDao.selectAllDefintions("AREA1","","");
+		assertEquals("Size for getting all defintions with criteria A",0,lst.size());
+	}
+	
+	
+	private void insertChecks() {
+		jdbcT.update(INSERT_CHECK_DEFINITION,"JUNIT-CHK-999","AREA1","GROUP1","SUBGROUP1","select 1 from dual where 1<0","JNT-999");
+		jdbcT.update(INSERT_CHECK_DEFINITION,"JUNIT-CHK-998","AREA1","GROUP1","SUBGROUP2","select 1 from dual where 1<0","JNT-998");
+		jdbcT.update(INSERT_CHECK_DEFINITION,"JUNIT-CHK-997","AREA1","GROUP1","SUBGROUP3","select 1 from dual where 1<0","JNT-997");
+		jdbcT.update(INSERT_CHECK_DEFINITION,"JUNIT-CHK-996","AREA1","GROUP2","SUBGROUP1","select 1 from dual where 1<0","JNT-996");
+		jdbcT.update(INSERT_CHECK_DEFINITION,"JUNIT-CHK-995","AREA2","GROUP1","SUBGROUP1","select 1 from dual where 1<0","JNT-995");
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters2() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA1","","");
+		assertEquals("Size if the retruned list does not match expectations",4,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters3() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA2","","");
+		assertEquals("Size if the retruned list does not match expectations",1,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters4() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA2","GROUP1","");
+		assertEquals("Size if the retruned list does not match expectations",1,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters5() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA2","GROUP2","");
+		assertEquals("Size if the retruned list does not match expectations",0,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters6() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA2",null,null);
+		assertEquals("Size if the retruned list does not match expectations",1,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters7() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA1","GROUP1",null);
+		assertEquals("Size if the retruned list does not match expectations",3,lst.size());
+	}
+	
+	@Test
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void testSelectWithParameters8() {
+		insertChecks();
+		List<DqiDefinition> lst=dqiDefintionDao.selectAllDefintions("AREA1","GROUP1","SUBGROUP2");
+		assertEquals("Size if the retruned list does not match expectations",1,lst.size());
 	}
 
 }

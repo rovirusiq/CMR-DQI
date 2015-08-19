@@ -17,7 +17,7 @@
 	    <result property="definition.group" column="ORIG_CHK_GROUP"/>
 	    <result property="definition.subGroup" column="ORIG_CHK_SUBGROUP"/>
 	    <result property="definition.executionFrequency" column="ORIG_CHK_EXECUTION_FREQUENCY"/>
-	    <result property="definition.sql" column="ORIG_CHK_SQL"/>
+	    <result property="definition.check" column="ORIG_CHK_SQL"/>
 	    <result property="status" column="EX_STATUS"/>
 	    <result property="statusDetails" column="EX_STATUS_DETAILS"/>
 	    <result property="startTime" column="EX_START"/>
@@ -71,7 +71,7 @@
 		,ORIG_CHK_EXECUTION_FREQUENCY,ORIG_CHK_CODE,ORIG_CHK_SQL,EX_STATUS,LAST_USER
 		) values(
 		#{id},#{request.id},#{definition.id},#{definition.name},#{definition.description},#{definition.area},#{definition.group,jdbcType=VARCHAR},#{definition.subGroup,jdbcType=VARCHAR}
-		,#{definition.executionFrequency},#{definition.code},#{definition.sql},#{status},#{lastUser,jdbcType=VARCHAR}
+		,#{definition.executionFrequency},#{definition.code},#{definition.check},#{status},#{lastUser,jdbcType=VARCHAR}
 		)
 	</insert>
 	

@@ -4,3 +4,7 @@ insert into O_LDS_META.CMT_CHECK_DEFINITION (CHK_ID, CHK_NAME, CHK_DESCRIPTION, 
 values (seq_checks.nextval, 'JUNIT-TEST-2', 'Do not delete or alter. It is a check used to run automatic tests', 'JUNIT','MAIN','', 'DAILY', 'Select 2 from dual where 1<0', 'JUNIT_DATA_PREP', 'JNT-002');
 insert into O_LDS_META.CMT_CHECK_DEFINITION (CHK_ID, CHK_NAME, CHK_DESCRIPTION, CHK_AREA,CHK_GROUP,CHK_SUBGROUP, CHK_EXECUTION_FREQUENCY, CHK_SQL, LAST_USER, CHK_CODE)
 values (seq_checks.nextval, 'JUNIT-TEST-3', 'Do not delete or alter. It is a check used to run automatic tests', 'JUNIT','','', 'DAILY', 'Select bla bla bla', 'JUNIT_DATA_PREP', 'JNT-003');
+insert into O_LDS_META.CMT_CHECK_DEFINITION (CHK_ID, CHK_NAME, CHK_DESCRIPTION, CHK_AREA,CHK_GROUP,CHK_SUBGROUP, CHK_EXECUTION_FREQUENCY, CHK_SQL, LAST_USER, CHK_CODE)
+values (seq_checks.nextval, 'JUNIT-TEST-4', 'Do not delete or alter. It is a check used to run automatic tests', 'JUNIT','','', 'DAILY', 'select ${JUNIT-PARAM-1} from ${JUNIT-PARAM-2} where ${JUNIT-PARAM-3}=${JUNIT-PARAM-4}', 'JUNIT_DATA_PREP', 'JNT-004');
+insert into O_LDS_META.CMT_CHECK_DEFINITION (CHK_ID, CHK_NAME, CHK_DESCRIPTION, CHK_AREA,CHK_GROUP,CHK_SUBGROUP, CHK_EXECUTION_FREQUENCY, CHK_SQL, LAST_USER, CHK_CODE)
+values (seq_checks.nextval, 'JUNIT-TEST-5', 'Do not delete or alter. It is a check used to run automatic tests', 'JUNIT','','', 'DAILY', 'select ${JUNIT-INEXISTENT-PARAMETER} from dual', 'JUNIT_DATA_PREP', 'JNT-005');

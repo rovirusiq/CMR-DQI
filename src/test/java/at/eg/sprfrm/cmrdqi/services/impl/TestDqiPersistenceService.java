@@ -1,6 +1,13 @@
-package at.eg.sprfrm.cmrdqi.services;
+package at.eg.sprfrm.cmrdqi.services.impl;
 
 import static org.junit.Assert.*;
+
+import at.eg.sprfrm.cmrdqi.config.TestConfig;
+import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
+import at.eg.sprfrm.cmrdqi.model.DqiExecution;
+import at.eg.sprfrm.cmrdqi.model.TestIntegrationFactoryObject;
+import at.eg.sprfrm.cmrdqi.services.IDqiPersistenceService;
+import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 import org.junit.After;
 import org.junit.Test;
@@ -16,14 +23,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import at.eg.sprfrm.cmrdqi.config.TestConfig;
-import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
-import at.eg.sprfrm.cmrdqi.dao.TestDqiExecutionAdvancedInt;
-import at.eg.sprfrm.cmrdqi.model.DqiExecution;
-import at.eg.sprfrm.cmrdqi.model.DqiExecutionStatusType;
-import at.eg.sprfrm.cmrdqi.model.TestDqiFactoryObject;
-import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class,loader=AnnotationConfigContextLoader.class)
@@ -51,7 +50,7 @@ public class TestDqiPersistenceService {
 	private TestDqiHelper testHelper;
 	
 	@Autowired
-	private TestDqiFactoryObject factoryObject;
+	private TestIntegrationFactoryObject factoryObject;
 	
 	@Autowired
 	private IDqiPersistenceService persistenceService;
@@ -93,7 +92,7 @@ public class TestDqiPersistenceService {
 		execution.setStatusDetails(buff.toString());
 		
 		log.info("Calling the update method on the persistence service");
-		persistenceService.logExecutionStatus(execution);
+		persistenceService.updateExecutionStatus(execution);
 		
 		log.info("Checking results");
 		

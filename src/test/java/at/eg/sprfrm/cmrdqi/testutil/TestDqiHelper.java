@@ -1,8 +1,10 @@
 package at.eg.sprfrm.cmrdqi.testutil;
 
-import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.SELECT_CHK_EXECUTION_ID;
-import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.SELECT_CHK_REQUEST_ID;
-import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.SELECT_IDS_CHK_DEFINTION;
+import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.*;
+
+import at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionDao;
+import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
+import at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao;
 
 import java.util.List;
 
@@ -10,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionDao;
-import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
-import at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao;
-
 public class TestDqiHelper {
+	
+	
+	
+	public static final String PARAMETER_NAME_1="JUNIT-PARAM-1";
 	
 	@Autowired
 	@Qualifier("jdbcTemplate")
@@ -35,7 +37,7 @@ public class TestDqiHelper {
 	
 	
 	public List<Long> fetchAllTestDqiDefintionsIdsFromDatabase(){
-		List<Long> list=jdbcT.queryForList(SELECT_IDS_CHK_DEFINTION+" where chk_code in ('JNT-001','JNT-002','JNT-003') order by CHK_ID ASC", Long.class);
+		List<Long> list=jdbcT.queryForList(SELECT_IDS_CHK_DEFINTION+" where last_user='JUNIT_DATA_PREP' order by CHK_ID ASC", Long.class);
 		return list;
 	}
 	
@@ -54,6 +56,9 @@ public class TestDqiHelper {
 		return idExecution;
 	}
 	
-	
+	public String selectValueForParameter() {
+		String rsp=jdbcT.queryForObject(SELECT_PARAMETER_VALUE_1,String.class);
+		return rsp;
+	}
 
 }

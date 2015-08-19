@@ -1,5 +1,14 @@
 package at.eg.sprfrm.cmrdqi;
 
+import at.eg.sprfrm.cmrdqi.config.ApplicationConfig;
+import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
+import at.eg.sprfrm.cmrdqi.model.DqiExecution;
+import at.eg.sprfrm.cmrdqi.model.DqiRequest;
+import at.eg.sprfrm.cmrdqi.model.IDqiFactoryObject;
+import at.eg.sprfrm.cmrdqi.services.DqiServiceException;
+import at.eg.sprfrm.cmrdqi.services.IDqiDefinitionExecutor;
+import at.eg.sprfrm.cmrdqi.services.IDqiPersistenceService;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,15 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import at.eg.sprfrm.cmrdqi.config.ApplicationConfig;
-import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
-import at.eg.sprfrm.cmrdqi.model.DqiExecution;
-import at.eg.sprfrm.cmrdqi.model.DqiRequest;
-import at.eg.sprfrm.cmrdqi.model.IDqiFactoryObject;
-import at.eg.sprfrm.cmrdqi.services.DqiServiceException;
-import at.eg.sprfrm.cmrdqi.services.IDqiDefinitionExecutor;
-import at.eg.sprfrm.cmrdqi.services.IDqiPersistenceService;
-
 public class Forest {
 	
 	protected Forest() {
@@ -27,7 +27,9 @@ public class Forest {
 	
 	public static Logger log=LoggerFactory.getLogger(Forest.class);
 		
-	public void run(String requesterCode, String method, String description) throws DqiServiceException{
+	public void run(String area, String group, String subgroup,String requesterCode, String method, String description) throws DqiServiceException{
+		
+		log.info("Running with parameters:[area="+area+",group="+group+",subgroup="+subgroup+",requestCode="+requesterCode+",method="+method+",description="+description+"]");
 		
 		try(AbstractApplicationContext context=new AnnotationConfigApplicationContext(ApplicationConfig.class)){
 			
@@ -36,7 +38,7 @@ public class Forest {
 			IDqiFactoryObject factoryObject=context.getBean(IDqiFactoryObject.class);
 			
 			log.info("Retrieving all DqiDefinitions.");
-			List<DqiDefinition> list=persistenceService.getAllDefinitions();
+			List<DqiDefinition> list=persistenceService.retrieveAllDefinitions(area,group,subgroup);
 			
 			log.info("Create request");
 			DqiRequest request=factoryObject.createRequest(requesterCode, method,description);
@@ -47,15 +49,17 @@ public class Forest {
 			List<Future<DqiExecution>> listResults=new ArrayList<Future<DqiExecution>>();
 			
 			log.info("Start processing definitions");
+			int count=1;
 			for (Iterator<DqiDefinition> it = list.iterator(); it.hasNext();) {
+				Boolean lastTask=(count==list.size());
 				DqiDefinition definition = (DqiDefinition) it.next();
+				
 				log.info("Submitting definition: "+definition);
 				
-				Future<DqiExecution> rsp=executorService.runDqi(request, definition);
+				Future<DqiExecution> rsp=executorService.runDqi(request, definition,lastTask);
 				listResults.add(rsp);
-				
+				count++;
 			}
-			executorService.shutdown();
 			
 			boolean notFinished=true;
 			

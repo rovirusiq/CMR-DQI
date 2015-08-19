@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionDao;
+import at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionParameterDao;
 import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
 import at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao;
 
@@ -47,6 +48,10 @@ public class DaoConfig extends InfrastructureConfig{
 		
 		@Autowired
 		@Qualifier("dqiDefinitionDao")
-		public IDqiDefinitionDao definitionDao;		
+		public IDqiDefinitionDao definitionDao;
+		
+		@Autowired
+		@Qualifier("dqiDefinitionParameterDao")
+		public IDqiDefinitionParameterDao definitionParameterDao;
 	
 }

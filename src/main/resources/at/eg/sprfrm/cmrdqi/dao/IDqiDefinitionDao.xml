@@ -30,7 +30,7 @@
     <result property="group" column="CHK_GROUP"/>
     <result property="subGroup" column="CHK_SUBGROUP"/>
     <result property="executionFrequency" column="CHK_EXECUTION_FREQUENCY"/>
-    <result property="sql" column="CHK_SQL"/>
+    <result property="check" column="CHK_SQL"/>
     <result property="lastUser" column="LAST_USER"/>
     <result property="insertTime" column="insert_Time"/>
     <result property="updateTime" column="update_Time"/>
@@ -51,13 +51,32 @@
   -->
   <select id="selectAllDefintions" resultMap="Definition">
   	<include refid="selecDefinitionColumns"/>
-  </select>
+  		where last_user!='JUNIT_DATA_PREP'
+  		<if test="param1!=null and param1!=''">
+  			AND chk_area=#{param1}
+  		</if>
+  		<if test="param2!=null and param2!=''">
+  			AND chk_group=#{param2}
+  		</if>
+  		<if test="param3!=null and param3!=''">
+  			AND chk_subgroup=#{param3}
+  		</if>
+  	</select>
   
   <!--
   	Select all the IDs (an only the id's) of the DqiDefinitions 
    -->
   <select id="selectAllDefintionIds" resultType="Integer">
   	select CHK_ID from cmt_check_definition def
+	<if test="param1!=null and param1!=''">
+		AND chk_area=#{param1}
+	</if>
+	<if test="param2!=null and param2!=''">
+		AND chk_group=#{param2}
+	</if>
+	<if test="param3!=null and param3!=''">
+		AND chk_subgroup=#{param3}
+	</if>
   </select>
   
   
@@ -66,7 +85,7 @@
    -->
   <select id="executeGenericQueryDefinition" resultType="Long">
   	select count(*) from (
-  		${sql}
+  		${check}
   	)
   </select>
   

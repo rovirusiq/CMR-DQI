@@ -12,15 +12,17 @@ import at.eg.sprfrm.cmrdqi.dao.IDqiExecutionDao;
 import at.eg.sprfrm.cmrdqi.dao.IDqiRequestDao;
 import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
-public class TestDqiFactoryObject extends AbstractDqiFactoryObject{
+
+//TODO to refactor this class so that it can generate simple objects for UnitTesting and complex objects for Integration Testing
+
+public class TestIntegrationFactoryObject extends TestUnitFactoryObject{
 	
 	
-	private static final String DEFAULT_LAST_USER="JUNIT";
 	private static final String EXTRACT_STATUS_DETAILS_ERROR="JUNIT generated status description for Error";
 	private static final String EXTRACT_STATUS_DETAILS_SUCCESS="JUNIT generated status description for Success";
 	private static final String EXTRACT_STATUS_DETAILS_EXCEPTION="JUNIT generated status description for Exception";
 		
-	private static final Logger log=LoggerFactory.getLogger(TestDqiFactoryObject.class);
+	private static final Logger log=LoggerFactory.getLogger(TestIntegrationFactoryObject.class);
 	
 	
 	
@@ -38,8 +40,7 @@ public class TestDqiFactoryObject extends AbstractDqiFactoryObject{
 	private final List<DqiDefinition> cachedListDefinitions=new ArrayList<DqiDefinition>();
 	
 	
-	
-	public TestDqiFactoryObject(IDqiRequestDao daoRequest,IDqiExecutionDao daoExecution,IDqiDefinitionDao daoDefinition,TestDqiHelper tstHelper) {
+	public TestIntegrationFactoryObject(IDqiRequestDao daoRequest,IDqiExecutionDao daoExecution,IDqiDefinitionDao daoDefinition,TestDqiHelper tstHelper) {
 		
 		log.info("Startinng to initialize the TestDqiFactory Object");
 		
@@ -139,15 +140,15 @@ public class TestDqiFactoryObject extends AbstractDqiFactoryObject{
 		execution.setStatus(DqiExecutionStatusType.EXCEPTION.value());
 		execution.setStatusDetails(EXTRACT_STATUS_DETAILS_EXCEPTION);
 	}
-/************************************************************************************************************
- *
- * IDqiFactoryObject
- *
- ************************************************************************************************************/
-	
-	@Override
-	public String getDefaultLastUser() {
-		return DEFAULT_LAST_USER;
+	public DqiDefinitionParameter createDefinitionParameter(String name,String value) {
+		DqiDefinitionParameter param=new DqiDefinitionParameter();
+		param.setLastUser(this.getDefaultLastUser());
+		param.setName(name);
+		param.setValue(value);
+		param.setId(-1L);
+		param.setInsertTime(Calendar.getInstance().getTime());
+		param.setUpdateTime(Calendar.getInstance().getTime());
+		return param;
 	}
 
 	/* (non-Javadoc)

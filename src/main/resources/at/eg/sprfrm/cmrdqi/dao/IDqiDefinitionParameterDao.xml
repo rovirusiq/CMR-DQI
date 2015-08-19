@@ -1,0 +1,35 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="at.eg.sprfrm.cmrdqi.dao.IDqiDefinitionParameterDao">
+ 
+  
+  <sql id="selectParameterColumns">
+  	select 
+  	PRM_ID,PRM_TYPE,PRM_KEY,PRM_VALUE,PRM_REFRESH_FLAG,INSERT_TIME,UPDATE_TIME,LAST_USER
+	from cmt_check_parameter param
+  </sql>
+  
+  
+  <!--
+  	Mapping specification for a DqiDefinition 
+   -->
+  <resultMap id="Definition" type="DqiDefinitionParameter">
+    <id property="id" column="PRM_ID"/>
+    <result property="name" column="PRM_KEY"/>
+    <result property="value" column="PRM_VALUE"/>
+  
+    <result property="lastUser" column="LAST_USER"/>
+    <result property="insertTime" column="insert_Time"/>
+    <result property="updateTime" column="update_Time"/>
+  </resultMap>
+  
+   <!-- 
+  	Select all Parameters
+  -->
+  <select id="selectAllParameters" resultMap="Definition">
+  	<include refid="selectParameterColumns"/> order by PRM_ID ASC
+  </select>
+
+</mapper>

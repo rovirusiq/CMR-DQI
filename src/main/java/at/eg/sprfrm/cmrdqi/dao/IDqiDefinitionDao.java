@@ -14,8 +14,10 @@ public interface IDqiDefinitionDao {
 	public DqiDefinition selectDefinition(@Param("id")Long id);	
 	
 	public List<DqiDefinition> selectAllDefintions();
+	public List<DqiDefinition> selectAllDefintions(String area, String group,String subGroup);
 	
 	public List<Long> selectAllDefintionIds();
+	public List<Long> selectAllDefintionIds(String area, String group,String subGroup);
 
 	public Long executeGenericQueryDefinition(DqiDefinition definition);
 	

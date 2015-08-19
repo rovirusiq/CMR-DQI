@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
+import at.eg.sprfrm.cmrdqi.model.DqiDefinitionParameter;
 import at.eg.sprfrm.cmrdqi.model.DqiExecution;
 import at.eg.sprfrm.cmrdqi.model.DqiExecutionStatusType;
 import at.eg.sprfrm.cmrdqi.model.DqiIssue;
@@ -16,7 +17,6 @@ import at.eg.sprfrm.cmrdqi.model.DqiRequest;
 
 
 //TODO to merge this class with the helper after I identify a better method to do the check
-//TODO sa scot hardcodarea de SYSTEM in afara
 public class TestDqiUtils {
 	
 	private static String DATABASE_DEFAULT_USER="SYSTEM";
@@ -37,7 +37,7 @@ public class TestDqiUtils {
 		assertEquals(definition.getSubGroup(),rowSet.getString("ORIG_CHK_SUBGROUP"));
 		assertEquals(definition.getExecutionFrequency(),rowSet.getString("ORIG_CHK_EXECUTION_FREQUENCY"));
 		assertEquals(definition.getCode(),rowSet.getString("ORIG_CHK_CODE"));
-		assertEquals(definition.getSql().trim(),convertClobToString(rowSet, "ORIG_CHK_SQL").trim());
+		assertEquals(definition.getCheck().trim(),convertClobToString(rowSet, "ORIG_CHK_SQL").trim());
 		assertNotNull(convertOracleTimestampToDate(rowSet, "INSERT_TIME"));
 		
 		assertEquals(request.getId(),(Long)rowSet.getLong("P_RQ_ID"));
@@ -84,7 +84,7 @@ public class TestDqiUtils {
 		assertEquals(definition.getGroup(), rowSet.getString("CHK_GROUP"));
 		assertEquals(definition.getSubGroup(), rowSet.getString("CHK_SUBGROUP"));
 		assertEquals(definition.getExecutionFrequency(), rowSet.getString("CHK_EXECUTION_FREQUENCY"));
-		assertEquals(definition.getSql().trim(), convertClobToString(rowSet,"CHK_SQL").trim());
+		assertEquals(definition.getCheck().trim(), convertClobToString(rowSet,"CHK_SQL").trim());
 		assertEquals(definition.getLastUser(), rowSet.getString("LAST_USER"));
 		assertEquals(definition.getInsertTime(), convertOracleTimestampToDate(rowSet, "INSERT_TIME"));
 		assertEquals(definition.getUpdateTime(), convertOracleTimestampToDate(rowSet, "UPDATE_TIME"));
@@ -115,10 +115,23 @@ public class TestDqiUtils {
 		assertEquals(request.getRequesterCode(), rowSet.getString("RQ_REQUESTER_CODE"));
 		assertEquals(request.getMethod(), rowSet.getString("RQ_METHOD"));
 		assertNotNull(rowSet.getString("LAST_USER"));
-		assertNotEquals("SYSTEM", rowSet.getString("LAST_USER"));
+		assertNotEquals(DATABASE_DEFAULT_USER, rowSet.getString("LAST_USER"));
 		assertNotNull(convertOracleTimestampToDate(rowSet, "INSERT_TIME"));
 		assertNotNull(convertOracleTimestampToDate(rowSet, "UPDATE_TIME"));
 				
+	}
+	
+public static final void checkDqiParameterAgainstRowset(DqiDefinitionParameter parameter,SqlRowSet rowSet,boolean moveRowSetToFirst) {
+		
+		if (moveRowSetToFirst) rowSet.first();
+		
+		assertEquals(parameter.getId(),(Long)rowSet.getLong("PRM_ID"));
+		assertEquals(parameter.getName(),rowSet.getString("PRM_KEY"));
+		assertEquals(parameter.getValue(),rowSet.getString("PRM_VALUE"));
+		assertNotNull(convertOracleTimestampToDate(rowSet, "INSERT_TIME"));
+		assertNotNull(convertOracleTimestampToDate(rowSet, "UPDATE_TIME"));
+		assertNotEquals(DATABASE_DEFAULT_USER,rowSet.getString("LAST_USER"));
+		
 	}
 
 }

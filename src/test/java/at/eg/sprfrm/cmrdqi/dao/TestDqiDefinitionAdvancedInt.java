@@ -1,12 +1,11 @@
 package at.eg.sprfrm.cmrdqi.dao;
 
-import static at.eg.sprfrm.cmrdqi.testutil.TestDqiUtils.checkDqiDefinitionAgainstRowSetAsFull;
 import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.*;
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
+import at.eg.sprfrm.cmrdqi.config.TestConfig;
+import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
+import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,17 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import at.eg.sprfrm.cmrdqi.config.TestConfig;
-import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
-import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class,loader=AnnotationConfigContextLoader.class)
@@ -55,7 +49,7 @@ public class TestDqiDefinitionAdvancedInt{
 		//create dummy defintition with only SQL for execution
 		log.info("Started the test testExecuteGenericQueryDefinitionWithIssues");
 		DqiDefinition def=new DqiDefinition();
-		def.setSql(SELECT_FOR_CHECK_WITH_ISSUES);
+		def.setCheck(SELECT_FOR_CHECK_WITH_ISSUES);
 		Long rsp=dqiDefintionDao.executeGenericQueryDefinition(def);
 		log.info("Ending the test testExecuteGenericQueryDefinitionWithIssues");
 		assertTrue(rsp>0);
@@ -66,7 +60,7 @@ public class TestDqiDefinitionAdvancedInt{
 	public void testExecuteGenericQueryDefinitionWithoutIssues() {
 		//create dummy defintition with only SQL for execution
 		DqiDefinition def=new DqiDefinition();
-		def.setSql(SELECT_FOR_CHECK_WITHOUT_ISSUES);
+		def.setCheck(SELECT_FOR_CHECK_WITHOUT_ISSUES);
 		Long rsp=dqiDefintionDao.executeGenericQueryDefinition(def);
 		assertTrue(rsp==0);
 	}

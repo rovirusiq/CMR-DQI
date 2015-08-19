@@ -16,6 +16,11 @@ public class DqiChecks {
 	
 	private Forest ft=new Forest();
 	
+	
+	private DqiChecks() {
+		
+	}
+	
 	private boolean isValidInputParam(String param) {
 		if ((null==param) || ("".equals(param))){
 			return false;
@@ -31,7 +36,7 @@ public class DqiChecks {
 		if (!isValidInputParam(requesterCode)) throw new DqiServiceException("Illegal Argument as requester Code");
 		if (!isValidInputParam(description))  description=DEFAULT_REQUESTER_DESCRIPTION;
 		log.info("Launching processing");
-		ft.run(requesterCode,RequestMethodType.JAVA_API.value(),description);
+		ft.run("","","",requesterCode,RequestMethodType.JAVA_API.value(),description);
 		log.info("End processing");
 		
 	}
@@ -55,7 +60,7 @@ public class DqiChecks {
 			log.warn("Context was already save in aprevious step. The new save was ignored");
 		}
 		log.info("Launching processing");
-		ft.run(requesterCode,RequestMethodType.JAVA_API.value(),description);
+		ft.run("","","",requesterCode,RequestMethodType.JAVA_API.value(),description);
 		log.info("End processing");
 		
 		

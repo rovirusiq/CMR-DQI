@@ -1,9 +1,11 @@
 package at.eg.sprfrm.cmrdqi.dao;
 
-import static at.eg.sprfrm.cmrdqi.testutil.TestDqiUtils.checkDqiRequestAgainstRowsetAsInitialSelect;
-import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.SELECT_CHK_REQUEST;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static at.eg.sprfrm.cmrdqi.testutil.TestDqiUtils.*;
+import static at.eg.sprfrm.cmrdqi.testutil.TestQueriesDefinitions.*;
+
+import at.eg.sprfrm.cmrdqi.config.TestConfig;
+import at.eg.sprfrm.cmrdqi.model.DqiRequest;
+import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,18 +19,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import at.eg.sprfrm.cmrdqi.config.TestConfig;
-import at.eg.sprfrm.cmrdqi.model.DqiRequest;
-import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TestConfig.class,loader=AnnotationConfigContextLoader.class)
 @TransactionConfiguration(defaultRollback = true)
 public class TestDqiRequestAdvancedInt {
 	
+	
+	@SuppressWarnings("all")
 	private static Logger log=LoggerFactory.getLogger(TestDqiExecutionAdvancedInt.class);
 	
 	@Autowired

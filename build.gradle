@@ -10,6 +10,7 @@ ext{
 	mybatisGeneratorVersion="1.3.0";
 	dbcpVersion="1.4";
 	groovyVersion="2.4.4";
+	ognlVersion="3.0.11";
 }
 
 def version = '1.0'
@@ -40,6 +41,11 @@ dependencies {
     compile "org.springframework:spring-jdbc:$springVersion";
     compile "org.springframework:spring-context:$springVersion";
     compile "org.springframework:spring-test:$springVersion";
+    
+    //ognl
+    compile "ognl:ognl:$ognlVersion";
+    
+    
     //logging
     compile "ch.qos.logback:logback-classic:+";
     compile "org.slf4j:jcl-over-slf4j:+";

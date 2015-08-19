@@ -26,7 +26,7 @@ import at.eg.sprfrm.cmrdqi.config.TestConfig;
 import at.eg.sprfrm.cmrdqi.model.DqiDefinition;
 import at.eg.sprfrm.cmrdqi.model.DqiExecution;
 import at.eg.sprfrm.cmrdqi.model.DqiIssue;
-import at.eg.sprfrm.cmrdqi.model.TestDqiFactoryObject;
+import at.eg.sprfrm.cmrdqi.model.TestIntegrationFactoryObject;
 import at.eg.sprfrm.cmrdqi.testutil.TestDqiHelper;
 
 
@@ -55,7 +55,7 @@ public class TestDqiIssueInt {
 	private TestDqiHelper testHelper;
 	
 	@Autowired
-	private TestDqiFactoryObject factoryObject;
+	private TestIntegrationFactoryObject factoryObject;
 	
 	
 	@Test

@@ -16,7 +16,7 @@ public class DqiDefinition {
 	private String group;
 	private String subGroup;
 	private String executionFrequency;
-	private String sql;
+	private String check;
 	private String lastUser;
 	private Date insertTime;
 	private Date updateTime;
@@ -70,11 +70,11 @@ public class DqiDefinition {
 	public void setExecutionFrequency(String executionFrequency) {
 		this.executionFrequency = executionFrequency;
 	}
-	public String getSql() {
-		return sql;
+	public String getCheck() {
+		return check;
 	}
-	public void setSql(String sql) {
-		this.sql = sql.trim();
+	public void setCheck(String sql) {
+		this.check = sql.trim();
 	}
 	public String getLastUser() {
 		return lastUser;

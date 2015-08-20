@@ -45,7 +45,7 @@
 		<selectKey keyProperty="id" resultType="long" order="BEFORE">
 			<include refid="generateKey"/>
 		</selectKey>
-	  	insert into O_LDS_META.CMT_CHECK_REQUEST
+	  	insert into CMT_CHECK_REQUEST
 	  	(RQ_ID, RQ_DESC, RQ_REQUESTER_CODE,RQ_METHOD,INSERT_TIME,UPDATE_TIME,LAST_USER)
     	values (
     	#{id,jdbcType=NUMERIC}, #{description,jdbcType=VARCHAR}, #{requesterCode,jdbcType=VARCHAR}, 

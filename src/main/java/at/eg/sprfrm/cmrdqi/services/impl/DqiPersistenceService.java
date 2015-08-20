@@ -21,9 +21,13 @@ import java.util.List;
 public class DqiPersistenceService implements IDqiPersistenceService{
 	
 	
+	private static final int REQUEST_MAX_DESCRIPTION_LENGTH = 80;
+	private static final int REQUEST_MAX_REQCODE_LENGTH = 30;
+
 	private static final Logger log=LoggerFactory.getLogger(DqiPersistenceService.class);
 	
 	private static final String EXCEPTION_MESSAGE = "An exception occured in the persistence service";
+
 	private final IDqiExecutionDao executionDao;
 	private final IDqiRequestDao requestDao;
 	private final IDqiDefinitionDao definitionDao;
@@ -114,10 +118,23 @@ public class DqiPersistenceService implements IDqiPersistenceService{
 	@Override
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void createRequest(DqiRequest request) throws DqiServiceException {
+		String originalDescription=request.getDescription();
+		String originalRequesterCode=request.getRequesterCode();
 		try {
+			if (originalDescription.length()>REQUEST_MAX_DESCRIPTION_LENGTH) {
+				request.setDescription(originalDescription.substring(0,REQUEST_MAX_DESCRIPTION_LENGTH));
+			}
+			
+			if (originalRequesterCode.length()>REQUEST_MAX_REQCODE_LENGTH) {
+				request.setRequesterCode(originalRequesterCode.substring(0,REQUEST_MAX_REQCODE_LENGTH));
+			}
+			
 			requestDao.insertRequest(request);
 		} catch(RuntimeException ex) {
 			throw new DqiServiceException(EXCEPTION_MESSAGE,ex);
+		} finally {
+			request.setDescription(originalDescription);
+			request.setRequesterCode(originalRequesterCode);
 		}
 	}	
 	

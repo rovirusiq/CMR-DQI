@@ -66,7 +66,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
 
-task mgenerator<<{
+task myMatisGenerator<<{
 	ant.taskdef(name:"mbgenerator",className:"org.mybatis.generator.ant.GeneratorAntTask"
 	,classpath:configurations.compile.asPath);
 	ant.mbgenerator(overwrite:"false",configfile:"src/main/resources/mybatis-generator.xml");

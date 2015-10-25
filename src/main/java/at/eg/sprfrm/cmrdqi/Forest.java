@@ -70,8 +70,11 @@ public class Forest {
 				
 				for (Iterator<Future<DqiExecution>> it = listResults.iterator(); it.hasNext();) {
 					Future<DqiExecution> ft=it.next();
-					if (!ft.isDone()) notFinished=true;
-					break;
+					if (!ft.isDone()) {
+						notFinished=true;
+						break;
+					}
+					
 				}
 				log.info("All results are ready:"+(!notFinished));
 				try{

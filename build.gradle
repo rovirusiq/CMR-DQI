@@ -3,6 +3,12 @@ apply plugin:"application";
 apply plugin:"eclipse";
 apply plugin:"project-report";
 
+version = '1.2'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+mainClassName="at.eg.sprfrm.cmrdqi.ShellRunner";
+applicationName="CMR-CHECKS-v$version";
+
 ext{
 	springVersion="4.1.7.RELEASE";
 	mybatisSpringVersion="1.2.3";
@@ -11,16 +17,32 @@ ext{
 	dbcpVersion="1.4";
 	groovyVersion="2.4.4";
 	ognlVersion="3.0.11";
+	
+	//neded by the script
+	sInstallPath=null;
+	sMissingParameterErrorMessage="You must provide as a parameter the path where the application should be installed.";
+	sMissingParameterErrorMessage<<'Ex: gradlew -q installCmrChecks -PpInstallLocation="c:';
+	sMissingParameterErrorMessage<<File.separator;
+	sMissingParameterErrorMessage<<'"';
+	sLineSeparator=System.getProperty("line.separator");
 }
 
-def version = '1.1'
-def sourceCompatibility = 1.7
-def targetCompatibility = 1.7
-
-
-mainClassName="at.eg.sprfrm.cmrdqi.ShellRunner";
-
-
+//check if Install path is defined
+logger.quiet(sLineSeparator);
+logger.quiet("###Checking parameters...");
+if ( (project.hasProperty('pInstallLocation')) && (!"".equals(project.pInstallLocation)) ){
+	logger.quiet("Parameter for Install path is defined");
+	try{
+		sInstallPath=new File(project.pInstallLocation).absolutePath;
+	} catch (Exception ex){
+		throw new RuntimeException("The parameter provided as Install path is not a valid path. Param: ${project.pInstallLocation}");
+	}
+	logger.quiet("Parameter after checking: ${sInstallPath}");
+} else {
+	logger.quiet("Parameter for Install path is NOT defined");
+}
+logger.quiet("###Finished check of parameters");
+logger.quiet(sLineSeparator);
 
 repositories{
 	mavenCentral();
@@ -62,6 +84,30 @@ dependencies {
     
 }
 
+jar{
+	manifest{
+		attributes "Main-Class":project.mainClassName;
+		attributes "Create-By":"Erste Spring Project Framework Team";
+	}
+	exclude("configuration-templates/**")
+	exclude("database-script/**")
+	exclude("manuals/**")
+	exclude("cmt_check.properties")
+	exclude("mybatis-generator")
+}
+
+startScripts{
+	outputs.upToDateWhen({return false});//always to be executed
+	applicationName="CMR-DQI";
+	doFirst{
+		classpath.add(files('conf'));
+	}
+}
+
+
+/*
+* Custom tasks
+*/
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
@@ -72,34 +118,82 @@ task myMatisGenerator<<{
 	ant.mbgenerator(overwrite:"false",configfile:"src/main/resources/mybatis-generator.xml");
 }
 
-jar{
-	manifest{
-		attributes "Main-Class":project.mainClassName;
-		attributes "Create-By":"Erste Spring Project Framework Team";
-	}
-	exclude("templates/**")
-	exclude("cmt_check.properties")
+task cleanFileSystem(type:Delete){
+	delete 'src/dist',"$buildDir/install";
 }
 
-task createSetupForConfiguration(type:Copy){
-	from 'src/main/resources/templates/cmt_check_production.properties';
-	into 'src/dist/lib/conf';
-	rename '(.+)_production(.+)', '$1$2'
-	
+task addManualsToDistribution(type:Copy){
+	from 'src/main/resources/manuals'
+	into 'src/dist/manuals';
 }
 
-task cleanSrcDist(type:Delete){
-	delete 'src/dist';
+task addDbScriptsToDistribution(type:Copy){
+	from 'src/main/resources/database-scripts';
+	into 'src/dist/database-scripts';
 }
 
-createSetupForConfiguration.dependsOn cleanSrcDist
-startScripts.dependsOn createSetupForConfiguration
-
-
-startScripts{
-	outputs.upToDateWhen({return false});//always to be executed
-	doFirst{
-		classpath.add(files('conf'));
+task addToDistribution{
+	outputs.upToDateWhen({return false});
+	doLast{
+		addConfigFileToDistribution.execute()
+		addManualsToDistribution.execute()
+		addDbScriptsToDistribution.execute()
 	}
 }
+
+task addConfigFileToDistribution{
+	if (sInstallPath!=null){
+		doLast{
+			mkdir 'src/dist/lib/conf';
+			def fileTemplate=new File('src/main/resources/configuration-templates/cmt_check_production.properties');
+			def fileResult=new File('src/dist/lib/conf','cmt_check.properties');
+			def templateEngine=new groovy.text.GStringTemplateEngine();
+			
+			def sLogPath="${sInstallPath}";
+			if ("\\".equals(File.separator)) sLogPath=sLogPath.replaceAll("\\\\","/");
+			sLogPath+='/logs/cmr-checks.log';
+			def template=templateEngine.createTemplate(fileTemplate).make(['logPath':sLogPath]);
+			fileResult<<template.toString();
+		}
+	} else {
+		doLast{
+			throw new RuntimeException(sMissingParameterErrorMessage);
+		}
+	}
+}
+
+task installCmrChecks(type:Copy){
+	outputs.upToDateWhen({return false});
+	if (sInstallPath!=null){
+		from "$buildDir/install"
+		into "${sInstallPath}"
+		doFirst{
+			try{
+				mkdir "${sInstallPath}"+File.separator+"logs";
+				delete "${sInstallPath}"+File.separator+"${project.applicationName}";
+			} catch (Exception ex){
+				def errorMessage="If the install directory already exists the script is trying to delete it." 
+				errorMessage<<" In this case, it was unable.";
+				errorMessage<<"Please check if you have the permissions needed and you don't have any file open from that folder.";
+				errorMessage<<"Original message: ${ex.message}";
+				throw new RuntimeException(errorMessage);
+			}
+		}
+	} else {
+		doFirst{
+			throw new RuntimeException(sMissingParameterErrorMessage);
+		}
+	}
+}
+
+/*
+* dependency declaration
+*/
+
+addToDistribution.dependsOn cleanFileSystem
+startScripts.dependsOn addToDistribution
+installCmrChecks.dependsOn installDist
+
+
+
 
